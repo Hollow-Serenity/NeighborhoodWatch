@@ -1,0 +1,59 @@
+@model BuurtApplicatie.Models.ViewModels.DeletePostViewModel
+
+@{
+    ViewData["Title"] = "Verwijder melding";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <hr/>
+    <dl class="row">
+        <dt class="col-sm-2">
+            Auteur
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Post.Author.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Post.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Post.Title)
+        </dd>
+        <dt class="col-sm-2">
+            Inhoud
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Post.Content)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Post.Category)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Post.Category.Name)
+        </dd>
+        @if (Model.Post.Image != null)
+        {
+            <dt class="col-sm-2">
+                Afbeelding
+            </dt>
+            <dd class="col-sm-10">
+                <img src='@($"data:image/png;base64,{Convert.ToBase64String(Model.Post.Image.Data)}")'
+                     style="width: 75%" alt=""/>
+            </dd>
+        }
+    </dl>
+    <hr/>
+    <div class="row">
+        <form asp-action="Delete" class="col-12 col-md-6">
+            <input type="hidden" asp-for="Post.Id"/>
+            <div class="form-group">
+                <label asp-for="Reason"></label>
+                <textarea class="form-control" asp-for="Reason" rows="3" cols="6" required></textarea>
+            </div>
+            <input type="submit" value="Verwijderen" class="btn btn-danger"/> |
+            <a asp-action="ReportedPosts">Terug naar gebruiker reports</a>
+        </form>
+    </div>
+</div>

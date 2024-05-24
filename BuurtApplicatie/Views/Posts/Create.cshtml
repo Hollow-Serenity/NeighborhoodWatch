@@ -1,0 +1,61 @@
+﻿@model BuurtApplicatie.Models.Post
+@{
+    ViewData["Title"] = "Probleem melden";
+}
+<h1 class="text-center text-primary mb-2">Probleem in de buurt melden</h1>
+<div class="container col-md-10 px-0" style="max-width: 850px">
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Title" class="control-label"></label>
+            <input asp-for="Title" class="form-control"/>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group mb-md-4">
+            <label asp-for="Content" class="control-label"></label>
+            <textarea asp-for="Content" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="form-group col col-md-6">
+                <label asp-for="CategoryId" class="control-label">Categorie <span class="small-helper-text">(optioneel)</span></label>
+                <select asp-for="CategoryId" class="custom-select" asp-items="ViewBag.CategoryId">
+                    <option value="">Kies een categorie</option>
+                </select>
+            </div>
+        </div>
+        <div class="row justify-content-md-between mt-3">
+            <div class="form-group col-sm-8 col-md-6">
+                <div class="custom-file">
+                    @* TODO: See if we can have the user enter a short text describing their image to use as alt text *@
+                    <label for="postImgFile" data-browse="Bestand kiezen">Voeg een afbeelding toe (Max. 2MB) <span class="small-helper-text">(optioneel)</span></label>
+                    <input type="file" id="postImgFile" name="uploadedFile" accept=".png, .jpg, .jpeg, .bmp">
+                </div>
+            </div>
+            <div class="col-sm-4 d-inline-flex justify-content-end">
+                <div class="form-check">
+                    <input for="IsPrivate" type="checkbox" name="IsPrivate" value="true" class="form-check-input"
+                           @Html.Raw(ViewBag.IsPrivate != null && ViewBag.IsPrivate ? "checked=\"checked\"" : "")/>
+                    <label id="IsPrivate" class="form-check-label">Meld Privé</label>
+                    <a id="privatePostBtn" class="private-post-popover" tabindex="0" role="button"
+                       data-trigger="click"
+                       data-placement="right"
+                       aria-label="Meer informatie over het maken van een privé melding"
+                       data-content="Als uw probleem van gevoelige aard is (u wilt bijvoorbeeld een melding van een drugspand maken) kun je ervoor kiezen om deze privé te melden. Uw melding zal dan niet voor andere gebruikers zichtbaar zijn, maar alleen voor medewerkers van de gemeente Den Haag.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16" data-toggle="tooltip" title="Wat betekent dit?">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="mt-5">
+            <input type="submit" value="Probleem Melden" class="btn btn-primary btn-lg"/>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

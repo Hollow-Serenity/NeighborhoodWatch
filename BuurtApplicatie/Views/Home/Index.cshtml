@@ -1,0 +1,57 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using BuurtApplicatie.Areas.Identity.Data
+@inject SignInManager<BuurtApplicatieUser> SignInManager
+@{
+    ViewData["Title"] = "Home";
+}
+
+<h1 class="text-center mb-2">Welkom bij Buurtapplicatie Waldeck!</h1>
+<img class="img-fluid rounded mx-auto d-block" src="~/img/waldeck.jpg" alt=""/>
+<div class="row mt-2">
+    <section class="col-12 col-lg-6">
+        <h2>Doel</h2>
+        <article>
+            <section>
+                <p>
+                    De buurtapplicatie biedt verschillende functies. Zodra je een account hebt aangemaakt kun je direct een overzicht zien van alle publieke meldingen binnen jouw buurt en hierop reageren. 
+                    Elke melding in dit overzicht is voorzien van een kort stukje van de inhoud en kun je filteren op categorie en datum. 
+                    Natuurlijk ben jij zelf ook in staat om meldingen te maken van zaken in jouw buurt. 
+                    Bij het maken van een melding heb je de keuze om deze anoniem of publiekelijk aan te maken. 
+                    Publieke meldingen zijn zichtbaar voor andere buurtbewoners, terwijl anonieme meldingen alleen in zichtbaar zijn voor de gemeente Den Haag.
+                </p>
+            </section>
+        </article>
+    </section>
+
+    <section class="col-12 col-lg-6">
+        <h2>Uitleg</h2>
+        <article>
+            <section>
+                <p>
+                    De buurtapplicatie biedt verschillende functies. Zodra je een account hebt aangemaakt kun je direct een overzicht zien van alle publieke meldingen binnen jouw buurt en hierop reageren.
+                    Elke melding in dit overzicht is voorzien van een kort stukje van de inhoud en kun je filteren op categorie en datum. Natuurlijk ben jij zelf ook in staat om meldingen te maken van zaken in jouw buurt.
+                    Bij het maken van een melding heb je de keuze om deze anoniem of publiekelijk aan te maken.
+                    Publieke meldingen zijn zichtbaar voor andere buurtbewoners,
+                    terwijl anonieme meldingen alleen in zichtbaar zijn voor de gemeente Den Haag.
+                </p>
+            </section>
+        </article>
+    </section>
+</div>
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <a class="btn btn-primary btn-block" style="margin-top: 20px" asp-action="Create" asp-controller="Posts">Maak een melding</a>
+}
+else
+{
+    <div class="row justify-content-around" style="margin-top: 20px">
+        <a class="btn btn-primary col-4" asp-area="Identity" asp-page="/Account/Register">Registreren</a>
+        <a class="btn btn-primary col-4" asp-area="Identity" asp-page="/Account/Login">Inloggen</a>
+    </div>
+}
+
+
+
+
+

@@ -1,0 +1,38 @@
+﻿@model BuurtApplicatie.Models.ViewModels.MyPostsViewModel
+
+@{
+    ViewData["Title"] = "Mijn Meldingen";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.AllPosts.FirstOrDefault().Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AllPosts.FirstOrDefault().Content)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AllPosts.FirstOrDefault().CreatedAt)
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.AllPosts) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

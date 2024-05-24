@@ -1,0 +1,149 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using BuurtApplicatie.Areas.Identity.Data
+@model BuurtApplicatie.Models.PostDetailsViewModels.PostDetailsViewModel
+@inject UserManager<BuurtApplicatieUser> UserManager
+
+@{
+    ViewData["Title"] = "Melding Details";
+    var user = await UserManager.GetUserAsync(User);
+    var userIsModerator = await UserManager.IsInRoleAsync(user, "Moderator");
+    var userHasLikedPost = ViewData["userHasLikedPost"] != null && (bool) ViewData["userHasLikedPost"];
+    var userHasReportedPost = ViewData["userHasReportedPost"] != null && (bool) ViewData["userHasReportedPost"];
+}
+<!-- Page Content -->
+
+<div class="container">
+    <div class="row">
+        <!-- Post Content Column -->
+        <div class="col">
+            @if (!Model.Post.IsOpen)
+            {
+                <div class="alert alert-info" role="alert">Deze melding is gesloten. Je kunt geen reacties meer plaatsen.</div>
+            }
+            @if (ViewData["UserIsAuthor"] != null && (bool) ViewData["UserIsAuthor"])
+            {
+                <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model.Post.Id">Melding aanpassen</a>
+            }
+            <!-- Title -->
+            <div class="row justify-content-between align-items-end">
+                <h1 class="mt-4 col text-break">@Model.Post.Title</h1>
+                <form class="pr-3" asp-action="ReportPost">
+                    <input asp-for="Post.Id" type="hidden" name="postId">
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary"
+                                aria-label="Markeer deze melding als misbruik."
+                                @Html.Raw(userHasReportedPost ? "disabled aria-disabled=\"true\"" : "")>
+                            <i class="bi-flag-fill"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <hr>
+            <!-- Date/Time -->
+            <div class="d-flex justify-content-between">
+                <p>Geplaatst op @Model.Post.CreatedAt.Date.ToShortDateString() om @Model.Post.CreatedAt.TimeOfDay.ToString(@"hh\:mm")</p>
+                <div class="d-inline-flex">
+                    @if (Model.Post.Author.ProfilePicture != null)
+                    {
+                        @(await Component.InvokeAsync("ProfilePicture", new
+                        {
+                            image = Model.Post.Author.ProfilePicture,
+                        }))
+                    }
+                    else
+                    {
+                        <div class="author-profile-img bg-primary rounded-circle p-1">
+                            <img alt="" src="~/img/bootstrap-icons/person.svg" height="100%"/>
+                        </div>
+                    }
+                    <p class="ml-2">@Model.Post.Author</p>
+                </div>
+            </div>
+            <hr>
+            <!-- Post Content -->
+            <div class="row mb-2">
+                <p class="text-break col">@Model.Post.Content</p>
+                @if (Model.Post.Image != null)
+                {
+                    <img class="col-12 col-md-6"
+                         style="width: 100%;"
+                         src='@($"data:image/png;base64,{Convert.ToBase64String(Model.Post.Image.Data)}")' alt=""/>
+                }
+            </div>
+            <div class="d-flex justify-content-end">
+                @if (Model.Post.IsOpen)
+                {
+                    <form asp-action="LikePost">
+                        <input asp-for="Post.Id" type="hidden" name="postId">
+                        <div class="d-flex px-2">
+                            <button type="submit" id="like" class="btn btn-primary" aria-label="Voeg deze melding toe aan mijn favorieten">
+                                <i class="bi-heart-fill" @Html.Raw(userHasLikedPost ? "style=\"color: orange;\"" : "")></i>
+                            </button>
+                        </div>
+                    </form>
+                    <span class="mt-2 ml-2" id="likes">@Model.Likes</span>
+                }
+                else
+                {
+                    <i class="@Html.Raw(userHasLikedPost ? "bi-heart-fill" : "bi-heart") text-primary"></i>
+                    <span class="ml-2">@Model.Likes</span>
+                }
+            </div>
+            <hr>
+            @if (userIsModerator)
+            {
+                <p class="text-primary">Moderator opties:</p>
+                <div>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Post.Id">Verwijder melding</a>
+                    @if (Model.Post.IsOpen)
+                    {
+                        <a class="btn btn-outline-danger" asp-action="Close" asp-route-id="@Model.Post.Id">Sluit melding</a>
+                    }
+                </div>
+            }
+            @if (Model.Post.IsOpen)
+            {
+                <!-- Comments Form -->
+                <div class="card my-4">
+                    <h4 class="card-header">Laat een reactie achter:</h4>
+                    <div class="card-body">
+                        <form asp-action="CreateComment">
+                            <div class="form-group">
+                                <input asp-for="Post.Id" type="hidden" name="postId">
+                                <textarea name="commentBody" class="form-control" rows="3" minlength="1" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Plaats reactie</button>
+                        </form>
+                    </div>
+                </div>
+            }
+            @foreach (var item in Model.Comments)
+            {
+                <div class="media mb-4">
+                    @{
+                        if (item.Author.ProfilePicture != null)
+                        {
+                            @(await Component.InvokeAsync("ProfilePicture", new
+                            {
+                                image = item.Author.ProfilePicture
+                            }))
+                        }
+                        else
+                        {
+                            <div class="author-profile-img bg-primary rounded-circle p-1">
+                                <img alt="" src="~/img/bootstrap-icons/person.svg" height="100%"/>
+                            </div>
+                        }
+                    }
+                    <div class="media-body ml-2">
+                        <div class="d-flex">
+                            <h5 class="mt-0">@item.Author.UserName</h5>
+                            <span class="ml-2">Geplaatst op @item.CreatedAt.Date.ToShortDateString() om @item.CreatedAt.TimeOfDay.ToString(@"hh\:mm")</span>
+                        </div>
+                        <p> @item.Content </p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,150 @@
+@page
+@using Microsoft.Extensions.Configuration
+@model RegisterModel
+@inject IConfiguration Configuration
+@{
+    ViewData["Title"] = "Registreren";
+}
+
+<h1 class="text-center text-primary">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col mx-auto" style="max-width:600px">
+        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <hr/>
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Input.Username" class="required"></label>
+                <input asp-for="Input.Username" class="form-control"/>
+                <span asp-validation-for="Input.Username" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Email" class="required"></label>
+                <input asp-for="Input.Email" class="form-control"/>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group form-row">
+                <div class="col-3">
+                    <label asp-for="Input.Address.PostCode" class="required"></label>
+                    <input asp-for="Input.Address.PostCode" class="form-control"
+                           placeholder="2521EN"/>
+                    <span asp-validation-for="Input.Address.PostCode" class="text-danger"></span>
+                </div>
+                <div class="col-3 col-sm-2">
+                    <label asp-for="Input.Address.HouseNr" class="required"></label>
+                    <input asp-for="Input.Address.HouseNr" class="form-control"
+                           placeholder="75"/>
+                    <span asp-validation-for="Input.Address.HouseNr" class="text-danger"></span>
+                </div>
+                <div class="col-3 col-sm-2">
+                    <label asp-for="Input.Address.Addition"></label>
+                    <input asp-for="Input.Address.Addition" class="form-control"/>
+                </div>
+                <div id="locationInfo" class="col-12 col-sm bg-light" style="display:none">
+                    <strong>Adres</strong>
+                    <div class="d-flex flex-column">
+                        <span id="street"></span>
+                        <span id="city"></span>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" asp-for="Input.Address.StreetName"/>
+            <input type="hidden" asp-for="Input.Address.City"/>
+            <div class="form-group">
+                <label asp-for="Input.Password" class="required"></label>
+                <input asp-for="Input.Password" class="form-control"/>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.ConfirmPassword" class="required"></label>
+                <input asp-for="Input.ConfirmPassword" class="form-control"/>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Verzenden</button>
+            </div>
+        </form>
+        <p>Velden aangeduid met<span class="required"></span> zijn verplicht</p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+    <script src="~/lib/jquery-validate-hooks/jquery.validate.hooks.js"></script>
+    <script>
+        $(document).ready(function (){
+            const errorList = $('form ul');
+            const houseNoInput = $('#Input_Address_HouseNr');
+            const postalCodeInput = $('#Input_Address_PostCode');
+            const additionInput = $('#Input_Address_Addition');
+            const cityInput = $('#Input_Address_City');
+            const streetInput = $('#Input_Address_StreetName');
+            
+            (function tryRedisplayAddress() { // on server address validation errors
+                let street = streetInput.val();
+                let city = cityInput.val();
+                let postalCode = postalCodeInput.val();
+                let houseNo = houseNoInput.val();
+                let addition = additionInput.val();
+                
+                if (street && city && postalCode && houseNo) {
+                    displayAutofilledAddress(street, houseNo, postalCode, city, addition);
+                }
+            })();
+            
+            
+            function removeVisibleErrors() {
+                errorList.find('li.custom-error').remove();
+            }
+                
+            function displayError(message) {
+                removeVisibleErrors();
+                errorList.append(`<li class='custom-error'>${message}</li>`);
+            }
+            
+            function displayAutofilledAddress(street, houseNo, postalCode, city, houseNoAddition) {
+                $('#street').text(`${street} ${houseNo}${houseNoAddition}`);
+                $('#city').text(`${postalCode} ${city}`);
+                $('#locationInfo').show();
+            }
+            
+            $('form').addTriggersToJqueryValidate().triggerElementValidationsOnFormValidation();
+
+            houseNoInput.elementValidationSuccess(async function (el, result) {
+                if (!postalCodeInput.valid()) return;
+                let postalCode = postalCodeInput.val().replaceAll(/ /g, ''); // remove possible spaces in postal code
+                const houseNo = $(el).val();
+                const houseNoAddition = additionInput.val();
+                
+                const response = await fetch(`https://geodata.nationaalgeoregister.nl/locatieserver/v3/free?fq=postcode:${postalCode}&fq=huisnummer:${houseNo}&rows=1`, {
+                    mode: 'cors'
+                });
+                if (!response.ok) return;
+                const json = await response.json();
+                if (!json.response.numFound) displayError('@Configuration["AddressValidation:ErrorMessages:AddressNotFound"]');
+                const addressInfo = json.response.docs[0];
+                if (!addressInfo) return;
+
+                removeVisibleErrors();
+                if (!addressInfo.buurtnaam.includes('@Configuration["AddressValidation:District"]')) {
+                    displayError('@Configuration["AddressValidation:ErrorMessages:AddressNotInDistrict"] @Configuration["AddressValidation:District"].');
+                }
+                
+                let street = addressInfo.straatnaam;
+                let city = addressInfo.woonplaatsnaam;
+                postalCode = addressInfo.postcode;
+                
+                streetInput.val(street);
+                cityInput.val(city);
+                postalCodeInput.val(postalCode);
+                displayAutofilledAddress(street, houseNo, postalCode, city, houseNoAddition);
+                
+                additionInput.off('change');
+                additionInput.change(function () {
+                    displayAutofilledAddress(street, houseNo, postalCode, city, $(this).val());
+                });
+            });
+        });
+    </script>
+}

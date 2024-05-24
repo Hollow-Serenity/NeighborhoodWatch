@@ -1,0 +1,104 @@
+﻿@{
+    ViewData["Title"] = "Profielinstellingen";
+}
+
+<div class="container">
+    <h1 class="text-center">Profielinstellingen</h1>
+    <div class="row">
+        <div class="col-4">
+            <div class="list-group" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Accountinstellingen</a>
+                <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Data opvragen</a>
+                <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">Zichtbaarheid</a>
+                <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">Account verwijderen</a>
+            </div>
+        </div>
+        @*<Accountinstellingen*@
+        <div class="col-8">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="list-home" role="tabpanel">
+                    <div class="d-flex justify-content-center">
+                        <form class="d-inline-block">
+                            <h2 class="text-center">Accountinstellingen</h2>
+                            <div class="form-group">
+                                <label for="Gebnaam">Gebruikersnaam</label><br />
+                                <input type="text" class="form-control" id="Gebnaam" naam="Gebnaam" placeholder="Abc123" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Email">E-mail</label><br />
+                                <input type="email" class="form-control" id="Email" naam="Email" placeholder="abc@example.com" />
+                            </div>
+                            <div class="form-group">
+                                <label for="Wwoord">Wachtwoord</label><br />
+                                <input type="password" class="form-control" id="Wwoord" naam="Wwoord" placeholder="Wachtwoord" />
+                            </div>
+                            <h2 class="text-center">Adresinstellingen</h2>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="Pcode">Postcode</label>
+                                    <input type="text" class="form-control" id="Pcode" placeholder="1234AB" maxlength="6">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="Hnummer">Huisnummer</label>
+                                    <input type="number" class="form-control" id="Hnummer" placeholder="1">
+                                </div>
+                            </div>
+                            <button class="col-md-10 btn btn-primary" id="Bevestig">Bevestig</button>
+                        </form>
+                    </div>
+                </div>
+                @* Data opvragen *@
+                <div class="tab-pane fade" id="list-profile" role="tabpanel">
+                    <h2>Data opvragen</h2>
+                    <p class="text-left">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                        Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+                        Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                        Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a,
+                        venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+                        Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae,
+                        eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus.
+                        Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue.
+                        Curabitur ullamcorper ultricies nisi. Nam eget dui.
+                    </p>
+                    <div class="form-group">
+                        <label for="Email">E-mail</label><br />
+                        <input type="email" class="form-control" id="Email" naam="Email" placeholder="abc@example.com" />
+                    </div>
+                    <button class="col-md-10 btn btn-primary">Data opvragen</button>
+                </div>
+                @* Zichtbaarheid *@
+                <div class="tab-pane fade" id="list-messages" role="tabpanel">
+                    <p class="text-left">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                        Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+                        Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                        Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a,
+                        venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+                        Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu,
+                        consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus.
+                        Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies
+                        nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui.
+                    </p>
+                </div>
+                @* Account verwijderen *@
+                <div class="tab-pane fade" id="list-settings" role="tabpanel">
+                    <p class="text-left">
+                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                        Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+                        Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                        Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a,
+                        venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus.
+                        Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu,
+                        consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus.
+                        Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies
+                        nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui.
+                    </p>
+                    <button class="col-md-4 btn btn-primary">Account verwijderen</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

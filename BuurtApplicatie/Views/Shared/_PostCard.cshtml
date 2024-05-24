@@ -1,0 +1,71 @@
+﻿@model BuurtApplicatie.Models.PostOverviewViewModels.PostOverviewPostViewModel
+
+<article class="col-12 col-md-6 pl-md-3 py-2">
+    <div class="d-flex flex-column post-card p-2 rounded hvr-glow"
+         tabindex="0" role="link" aria-label="Lees meer over @Model.Post.Title"
+         data-href="@Url.Action("Details", "Posts")/@Model.Post.Id">
+        <header class="d-flex justify-content-between">
+            <div class="d-inline-flex">
+                @if (Model.Post.Author.ProfilePicture != null)
+                {
+                    @(await Component.InvokeAsync("ProfilePicture", new
+                    {
+                        image = Model.Post.Author.ProfilePicture,
+                    }))
+                }
+                else
+                {
+                    <div class="author-profile-img bg-primary rounded-circle p-1">
+                        <img alt="" src="~/img/bootstrap-icons/person.svg" height="100%"/>
+                    </div>
+                }
+                <address class="ml-2 align-self-center text-muted post-card-author text-break">@Model.Post.Author.UserName</address>
+            </div>
+            <p class="text-right text-muted font-italic">Geplaatst op @Model.Post.CreatedAt.Date.ToShortDateString()</p>
+        </header>
+        <div class="row flex-grow-1 ">
+            <div class="post-text-container col">
+                <h2 class="mb-2 post-card-header text-break">@Model.Post.Title</h2>
+                <p class="text-break">@Model.TruncatedContent</p>
+            </div>
+            @if (Model.Post.Image != null)
+            {
+                <div class="post-image-container col-5">
+                    <img src='@($"data:image/png;base64,{Convert.ToBase64String(Model.Post.Image.Data)}")'
+                         style="width: 100%" alt=""/>
+                </div>
+            }
+        </div>
+        <footer class="row no-gutters text-primary">
+            <div class="col d-flex user-select-none align-items-center">
+                <div class="px-2">
+                    @* [Dino] We're unable to use a css icon here because the default size is too small. Applying the 
+                     * same sizing on the css icon causes a misalignment with the other icons in the stats row.
+                     * The only way to not have this issue is to use the raw SVG and set the width and height manually. 
+                     *@
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1.15em" height="1.15em" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                        <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                    </svg>
+                    @Model.Views
+                </div>
+                <div class="px-2">
+                    <i class="bi-heart-fill"></i>
+                    @Model.Likes
+                </div>
+                <div class="px-2">
+                    <i class="bi-chat-right-text-fill"></i>
+                    @Model.Comments
+                </div>
+            </div>
+            @if (Model.Post.Category != null)
+            {
+                <a class="badge badge-primary badge-pill align-self-end" asp-controller="Posts" asp-action="Index" asp-route-category="@Model.Post.Category.Name">
+                    <div class="align-self-end">
+                        @Model.Post.Category.Name
+                    </div>
+                </a>
+            }
+        </footer>
+    </div>
+</article>

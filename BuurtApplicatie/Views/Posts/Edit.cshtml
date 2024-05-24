@@ -1,0 +1,59 @@
+@model BuurtApplicatie.Models.PostEditViewModels.PostEditViewModel
+
+@{
+    ViewData["Title"] = "Melding Bewerken";
+}
+
+<h1 class="text-primary text-center">@ViewData["Title"]</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Title" value="@Model.Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control"/>
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="Content" class="control-label"></label>
+                    <textarea asp-for="Content" class="form-control" rows="5" value="@Model.Content"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CategoryId" class="control-label">Categorie <span class="small-helper-text">(optioneel)</span></label>
+                    <select asp-for="CategoryId" class="custom-select" asp-items="ViewBag.CategoryId">
+                        <option value="">Geen categorie</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="control-label" for="postImgFile" data-browse="Bestand kiezen">
+                        @if (Model.ImageId == null)
+                        {
+                            @Html.Raw("Voeg een afbeelding toe (Max. 2MB) <span class=\"small-helper-text\">(optioneel)</span>")
+                        }
+                        else
+                        {
+                            @Html.Raw("Wijzig afbeelding (Max. 2MB)");
+                        }
+                    </label>
+                    <input class="custom-file" type="file" id="postImgFile" name="uploadedFile" accept=".png, .jpg, .jpeg, .bmp">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Opslaan</button>
+                </div>
+                <div>
+                    <a asp-action="Details" asp-route-id="@Model.Id">Annuleren</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

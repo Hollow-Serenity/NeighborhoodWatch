@@ -1,0 +1,39 @@
+﻿@model IEnumerable<BuurtApplicatie.Models.ReportedPost>
+
+@{
+    ViewData["Title"] = "Gebruiker reports";
+}
+
+<h1>Als misbruik gemarkeerde meldingen</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            Melding
+        </th>
+        <th>
+            Misbruik gemeld door
+        </th>
+        <th>
+            Acties
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Post.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReportedBy.UserName)
+            </td>
+            <td>
+                @Html.ActionLink("Toon", "Details", new { id=item.PostId }) |
+                @Html.ActionLink("Verwijder", "Delete", new { id=item.PostId })
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

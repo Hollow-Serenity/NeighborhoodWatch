@@ -1,0 +1,219 @@
+﻿@model BuurtApplicatie.Models.PostOverviewViewModels.PostOverviewViewModel
+
+@{
+    ViewData["Title"] = "Meldingoverzicht";
+}
+<link rel="stylesheet" href="~/lib/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.min.css"/>
+
+<h1 class="text-center text-primary mb-2">Meldingen uit jouw buurt</h1>
+
+<div class="row no-gutters pr-0 flex-column">
+    <div role="search" class="container row px-0 px-md-3 mx-0 mx-sm-auto justify-content-start align-items-center">
+        <div class="col-12 col-md-6 my-1 d-flex justify-content-between justify-content-md-start">
+            <button class="btn btn-primary mr-md-1 mr-lg-5 text-nowrap"
+                    data-toggle="modal" data-target="#filterModal" aria-label="Filter">
+                <i class="bi-funnel-fill"></i>
+                <span class="d-none d-sm-inline-block">Filter</span>
+            </button>
+
+            <form id="postOverviewFilter" class="form-inline flex-sm-grow-1 flex-md-grow-0 justify-content-end flex-nowrap" asp-action="Index" method="get">
+                <input type="hidden" name="q" value="@ViewData["Filter"]"/>
+                <label class="my-1 mr-2 text-nowrap" asp-for="OrderBy">Sorteer op:</label>
+                <select asp-for="OrderBy" asp-items="Model.OrderBySelectListItems" class="custom-select my-1 mr-md-2" name="orderBy"></select>
+                <input type="hidden" name="pageNumber" value="0"/>
+                <input type="hidden" name="start" value="@ViewData["start"]"/>
+                <input type="hidden" name="end" value="@ViewData["end"]"/>
+                @if (ViewBag.SelectedCategories != null)
+                {
+                    foreach (var category in ViewBag.SelectedCategories)
+                    {
+                        <input type="hidden" name="category" value="@category"/>
+                    }
+                }
+
+                @foreach (var item in Model.StatusCheckBoxes.Where(item => item.IsChecked))
+                {
+                    <input type="hidden" name="status" value="@item.Value"/>
+                }
+                @if (Model.InMyFavorites.IsChecked)
+                {
+                    <input type="hidden" name="inMyFavorites" value="true">
+                }
+            </form>
+        </div>
+        <div class="col-auto flex-grow-1">
+            <form class="form-inline justify-content-end flex-nowrap" asp-action="Index" method="get">
+                <input id="searchField" class="form-control flex-fill flex-md-grow-0 col-md-7 col-lg-12"
+                       name="q" type="search" value="@ViewData["Filter"]" placeholder="Zoeken"
+                       aria-label="Zoek door meldingen"/>
+                <input type="hidden" name="orderBy" value="@Model.OrderBy"/>
+                <input type="hidden" name="pageNumber" value="0"/>
+                <input type="hidden" name="start" value="@ViewData["start"]"/>
+                <input type="hidden" name="end" value="@ViewData["end"]"/>
+                @if (ViewBag.SelectedCategories != null)
+                {
+                    foreach (var category in ViewBag.SelectedCategories)
+                    {
+                        <input type="hidden" name="category" value="@category"/>
+                    }
+                }
+                @foreach (var item in Model.StatusCheckBoxes.Where(item => item.IsChecked))
+                {
+                    <input type="hidden" name="status" value="@item.Value"/>
+                }
+                @if (Model.InMyFavorites.IsChecked)
+                {
+                    <input type="hidden" name="inMyFavorites" value="true">
+                }
+                <button class="btn btn-outline-primary ml-2" type="submit" value="Zoeken" aria-labelledby="searchField">
+                    <i class="bi-search" style="font-size: 1.15em"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="container row px-0 px-md-3 mx-0 mx-sm-auto">
+        @foreach (var post in Model.Posts)
+        {
+            <partial name="_PostCard" model="post"></partial>
+        }
+    </div>
+</div>
+
+<nav aria-label="Results pages">
+    <form class="pagination justify-content-around mt-3 mx-sm-5" asp-action="Index" method="get">
+        <input type="hidden" name="q" value="@ViewData["Filter"]"/>
+        <input type="hidden" name="orderBy" value="@Model.OrderBy"/>
+        @if (ViewBag.SelectedCategories != null)
+        {
+            foreach (var category in ViewBag.SelectedCategories)
+            {
+                <input type="hidden" name="category" value="@category"/>
+            }
+        }
+        @foreach (var item in Model.StatusCheckBoxes.Where(item => item.IsChecked))
+        {
+            <input type="hidden" name="status" value="@item.Value"/>
+        }
+        @if (Model.InMyFavorites.IsChecked)
+        {
+            <input type="hidden" name="inMyFavorites" value="true">
+        }
+        <button type="submit" class="btn @(Model.Posts.HasPrevious() ? "btn-primary" : "btn-secondary")"
+                name="pageNumber" value="@(Model.Posts.Page - 1)"
+                @Html.Raw(Model.Posts.HasPrevious() ? "" : "disabled aria-disabled=\"true\"")>
+            Previous
+        </button>
+        <button class="btn @(Model.Posts.HasNext() ? "btn-primary" : "btn-secondary")"
+                name="pageNumber" value="@(Model.Posts.Page + 1)"
+                @Html.Raw(Model.Posts.HasNext() ? "" : "disabled aria-disabled=\"true\"")>
+            Next
+        </button>
+        <input type="hidden" name="start" value="@ViewData["start"]"/>
+        <input type="hidden" name="end" value="@ViewData["end"]"/>
+    </form>
+</nav>
+
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filters</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="filterForm" asp-action="Index" method="get">
+                    <input type="hidden" name="q" value="@ViewData["Filter"]"/>
+                    <input type="hidden" name="orderBy" value="@Model.OrderBy"/>
+                    <input type="hidden" name="pageNumber" value="0"/>
+                    <label class="control-label" for="datepicker">Datumbereik</label>
+                    <div class="input-daterange input-group" id="datepicker">
+                        <input type="text" class="input-sm form-control" name="start" 
+                               value="@ViewData["start"]" aria-label="startdatum"/>
+                        <span class="input-group-text">tot</span>
+                        <input type="text" class="input-sm form-control" name="end" 
+                               value="@ViewData["end"]" aria-label="einddatum"/>
+                    </div>
+                    <hr/>
+                    <h6>Status</h6>
+                    @foreach (var item in Model.StatusCheckBoxes)
+                    {
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id=@($"status{item.Value}Check")
+                                   name="status"
+                                   value="@item.Value"
+                                   @Html.Raw(item.IsChecked ? "checked=\"checked\"" : "")/>
+                            <label class="form-check-label" for=@($"status{item.Value}Check")>@item.Label</label>
+                        </div>
+                    }
+                    <hr/>
+                    <h6>Categorie</h6>
+                    @foreach (var category in Model.Categories)
+                    {
+                        var categoryName = category.Name;
+                        string inputId = $"category{category.Name}";
+
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input"
+                                   id="@inputId"
+                                   name="category"
+                                   value="@categoryName"
+                                   @Html.Raw(category.IsChecked ? "checked=\"checked\"" : "")/>
+                            <label class="form-check-label" for="@inputId">@categoryName</label>
+                        </div>
+                    }
+                    <hr/>
+                    <h6>Overig</h6>
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               name="inMyFavorites"
+                               value="true"
+                               id="inFavorietenCheck"
+                               type="checkbox"
+                               @Html.Raw(Model.InMyFavorites.IsChecked ? "checked=\"checked\"" : "")/>
+                        <label class="form-check-label" for="inFavorietenCheck">@Model.InMyFavorites.Label</label>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Sluiten</button>
+                <button type="submit" form="filterForm" class="btn btn-primary">Pas filter(s) toe</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/lib/bootstrap-datepicker/locales/bootstrap-datepicker.nl.min.js"></script>
+    <script>
+        function openPost(el) {
+            window.location.href = $(el).attr('data-href');
+        }
+        
+        $(function() {
+            let postCard = $('.post-card');
+            postCard.click(function() {
+                openPost(this);
+            });
+            
+            postCard.keypress(function (e) {
+                if (e.which === 13) {
+                    openPost(this);
+                }
+            });
+        });
+        
+        $('#filterForm .input-daterange').datepicker({
+            startDate: "01/01/2020",
+            endDate: "01/01/2100",
+            maxViewMode: 2,
+            language: "nl",
+            todayHighlight: true,
+            clearBtn: true
+        });
+    </script>
+}

@@ -1,0 +1,20 @@
+﻿@model BuurtApplicatie.Models.ImageViewModels.ImageViewModel
+
+@if (Model.Data != null)
+{
+    <div class="profile-picture align-middle"
+         @if (Model.AltText == null)
+         {
+             @Html.Raw("aria-hidden=\"true\"")
+         }
+         else
+         {
+             @Html.Raw($"aria-label=\"{Model.AltText}\"")
+         }
+         style="background-image:url(@Model.DataUrl)">
+    </div>
+}
+else
+{
+    <i class="bi-person" style="font-size: 1.5rem"></i>
+}

@@ -1,0 +1,93 @@
+﻿@using BuurtApplicatie.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Configuration
+@inject SignInManager<BuurtApplicatieUser> SignInManager
+@inject IConfiguration Configuration
+@{
+    var districtName = Configuration["AddressValidation:District"];
+}
+<!DOCTYPE html>
+<html lang="nl" class="h-100">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="title" content="@(ViewBag.Title ?? $"Buurtapplicatie {districtName}")" />
+    <meta name="description" content="@($"Help mee met het verbeteren van {districtName}!")" />
+    <meta name="keywords" content=@($"Inbraak melden, {districtName}, Eenzaam, Buurtpreventie, Wijkpreventie")>
+
+    <title>@ViewData["Title"] - BuurtApplicatie @districtName</title>
+    <environment include="Development">
+        <link rel="stylesheet" href="~/dist/bundle.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/dist/bundle.min.css" />
+    </environment>
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.2.2/font/bootstrap-icons.css">
+</head>
+<body class="d-flex flex-column h-100">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light container-fluid px-sm-5 bg-primary border-bottom box-shadow mb-3">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <img class="header-logo" src="~/img/logo.png" alt="Naar de homepagina" />
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row">
+                <div class="navbar-nav flex-grow-1">
+                    <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <a class="nav-link text-light" asp-area="" asp-controller="Posts" asp-action="Index">
+                            Mijn
+                            Buurt
+                        </a>
+                        <a class="nav-link text-light" asp-area="" asp-controller="Posts" asp-action="Create">
+                            Meld
+                            probleem
+                        </a>
+                    }
+                </div>
+                <partial name="_LoginPartial" />
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="flex-shrink-0">
+        <div class="container-fluid px-sm-5 pb-3">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="footer mt-auto border-top text-muted">
+        <div class="container-fluid px-sm-5">
+            <div class="row align-items-center">
+                <div class="col-sm-3">&copy; 2020 - BuurtApplicatie Groep 3D</div>
+                <div class="col-sm-6 row text-sm-center d-inline-flex flex-wrap">
+                    <div class="col-6"><a href="https://www.denhaag.nl/">Gemeente Den Haag</a></div>
+                    <div class="col-6"><a asp-area="" asp-controller="Home" asp-action="Index">Over Ons</a></div>
+                    <div class="col-6"><a asp-area="" asp-controller="Home" asp-action="Index">Gebruiksvoorwaarden</a></div>
+                    <div class="col-6"><a asp-area="" asp-controller="Home" asp-action="Privacy">Privacybeleid</a></div>
+                </div>
+                <div class="col-sm-3 text-sm-right">
+                    <a href="mailto:email@example.com">
+                        <i class="bi-envelope-fill"></i>
+                        email@example.com
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <environment include="Development">
+        <script src="~/dist/bundle.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/dist/bundle.min.js" asp-append-version="true"></script>
+    </environment>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
